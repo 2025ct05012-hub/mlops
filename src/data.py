@@ -1,8 +1,23 @@
 """Data loading and validation helpers."""
+
 from pathlib import Path
 import pandas as pd
 
-FEATURES = ["age", "sex", "cp", "trestbps", "chol", "fbs", "restecg", "thalach", "exang", "oldpeak", "slope", "ca", "thal"]
+FEATURES = [
+    "age",
+    "sex",
+    "cp",
+    "trestbps",
+    "chol",
+    "fbs",
+    "restecg",
+    "thalach",
+    "exang",
+    "oldpeak",
+    "slope",
+    "ca",
+    "thal",
+]
 CATEGORICAL = ["sex", "cp", "fbs", "restecg", "exang", "slope", "ca", "thal"]
 NUMERIC = ["age", "trestbps", "chol", "thalach", "oldpeak"]
 

@@ -1,4 +1,5 @@
 """FastAPI inference service with structured logs and Prometheus metrics."""
+
 from __future__ import annotations
 import logging
 import os
@@ -18,9 +19,14 @@ logging.basicConfig(level=os.getenv("LOG_LEVEL", "INFO"), format="%(asctime)s %(
 logger = logging.getLogger("heart_disease_api")
 REQUESTS = Counter("prediction_requests_total", "Prediction requests", ["endpoint", "status"])
 LATENCY = Histogram("prediction_request_duration_seconds", "Prediction request duration")
-app = FastAPI(title="Heart Disease Risk Classification API", version="1.0.0", description="Educational demonstration only; not for clinical use.")
+app = FastAPI(
+    title="Heart Disease Risk Classification API",
+    version="1.0.0",
+    description="Educational demonstration only; not for clinical use.",
+)
 app.mount("/metrics", make_asgi_app())
 model = None
+
 
 class PatientFeatures(BaseModel):
     age: Annotated[float, Field(ge=1, le=120)]
@@ -37,6 +43,7 @@ class PatientFeatures(BaseModel):
     ca: Annotated[int, Field(ge=0, le=4)]
     thal: Annotated[int, Field(ge=0, le=7)]
 
+
 @app.on_event("startup")
 def load_model() -> None:
     global model
@@ -45,6 +52,7 @@ def load_model() -> None:
         logger.info("model_loaded path=%s", MODEL_PATH)
     else:
         logger.error("model_not_found path=%s", MODEL_PATH)
+
 
 @app.middleware("http")
 async def log_requests(request: Request, call_next):
@@ -59,11 +67,18 @@ async def log_requests(request: Request, call_next):
         raise
     finally:
         LATENCY.observe(time.perf_counter() - start)
-        logger.info("request method=%s path=%s duration_ms=%.2f", request.method, request.url.path, (time.perf_counter() - start) * 1000)
+        logger.info(
+            "request method=%s path=%s duration_ms=%.2f",
+            request.method,
+            request.url.path,
+            (time.perf_counter() - start) * 1000,
+        )
+
 
 @app.get("/health")
 def health():
     return {"status": "ok", "model_loaded": model is not None}
+
 
 @app.post("/predict")
 def predict(patient: PatientFeatures):
@@ -74,10 +89,14 @@ def predict(patient: PatientFeatures):
         probability = float(model.predict_proba(row)[0, 1])
         label = int(probability >= 0.5)
         logger.info("prediction_completed label=%s probability=%.4f", label, probability)
-        return {"prediction": label, "label": "disease_present" if label else "no_disease",
-                "confidence": round(probability if label else 1 - probability, 4),
-                "disease_probability": round(probability, 4), "threshold": 0.5,
-                "disclaimer": "Educational prototype only; not a medical diagnosis."}
+        return {
+            "prediction": label,
+            "label": "disease_present" if label else "no_disease",
+            "confidence": round(probability if label else 1 - probability, 4),
+            "disease_probability": round(probability, 4),
+            "threshold": 0.5,
+            "disclaimer": "Educational prototype only; not a medical diagnosis.",
+        }
     except Exception as exc:
         logger.exception("prediction_error")
         raise HTTPException(status_code=500, detail="Prediction failed") from exc
