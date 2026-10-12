@@ -1,0 +1,26 @@
+{
+  "model_name": "logistic_regression",
+  "features": [
+    "age",
+    "sex",
+    "cp",
+    "trestbps",
+    "chol",
+    "fbs",
+    "restecg",
+    "thalach",
+    "exang",
+    "oldpeak",
+    "slope",
+    "ca",
+    "thal"
+  ],
+  "threshold": 0.5,
+  "target_mapping": {
+    "0": "no disease",
+    "1": "disease present"
+  },
+  "selection_metric": "mean 5-fold CV ROC-AUC",
+  "dataset": "UCI Heart Disease (id 45)",
+  "warning": "Educational prototype only; not for clinical use."
+}

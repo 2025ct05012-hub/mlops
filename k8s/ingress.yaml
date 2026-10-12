@@ -1,0 +1,17 @@
+# Optional: apply only after installing an ingress controller and configuring DNS.
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: heart-disease-api
+spec:
+  rules:
+    - host: heart-disease-api.example.test
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: heart-disease-api
+                port:
+                  number: 8000
