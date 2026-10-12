@@ -1,17 +1,19 @@
 """Generate reproducible EDA summaries and plots."""
 
-from pathlib import Path
-from src.data import FEATURES, load_dataset
 import sys
-import matplotlib
-import matplotlib.pyplot as plt
-import pandas as pd
-import seaborn as sns
+from pathlib import Path
+
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 
-
+import matplotlib
 matplotlib.use("Agg")
+
+import matplotlib.pyplot as plt
+import pandas as pd
+import seaborn as sns
+
+from src.data import FEATURES, load_dataset
 
 
 
